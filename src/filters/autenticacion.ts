@@ -12,6 +12,7 @@ export function validaToken(req: any, res:Response, next:NextFunction){
     
     jwt.verify(token, process.env.SEED,(error, decoded) =>{
         if(error){
+            console.log(error);
             return res.status(401).json({
                 status:false,
                 message:error.message

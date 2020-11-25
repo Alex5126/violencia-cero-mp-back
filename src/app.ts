@@ -3,13 +3,14 @@ import morgan from 'morgan';
 
 //Route
 import InedexRoute from './routes/index.routes';
-import RegistrationRoute from './routes/registration.routes';
+import RegistrationRoute from './routes/registroapp.routes';
 import UserAppRoute from "./routes/appusers.routes";
 import DenunciaRoute from "./routes/denuncia.routes";
 import ProcedimientoRoute from "./routes/procedimiento.routes";
 import ContactosRoute from "./routes/contactos.routes";
 import CentrosRoute from "./routes/centros.routes";
 import AdminRoute from "./routes/adminusers.routes";
+import AdminRegistroRoute from "./routes/registroadmin.routes";
 import { validaToken } from './filters/autenticacion';
 import { loadConfig } from "./config/config";
 
@@ -42,7 +43,8 @@ export class App{
         this.app.use('/procedimientos',ProcedimientoRoute);
         this.app.use('/centros',CentrosRoute);
         this.app.use('/contactos',ContactosRoute);
-        this.app.use('/admin',AdminRoute);
+        this.app.use('/admin',AdminRegistroRoute);
+        this.app.use('/admin/perfil',validaToken, AdminRoute);
     }
 
     async listen(){

@@ -38,12 +38,23 @@ export default class RecoveryCodes{
     public static htmlCode(code:String){
 
         let html:String = `<table style="font-family: Helvetica, sans-serif;width:100%;font-size: 18px">
-                <tr align="center"><td><p>Código de recuperación</p></td></tr>
+                <tr align="center"><td><p>Código de recuperación Temporal</p></td></tr>
                 <tr align="center"><td>
                     <div style="font-size: 26px;font-weight: bold;">
                         <p>${code}</p>
                     </div>
-                </td></tr>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td>
+                        <div style="max-width:450px;font-size:12px;">
+                            <br/>
+                            <p>Tu seguridad es lo más importante para nosotros, 
+                            por lo que si tú no solicitaste este código, 
+                            por favor comunícate a </p>
+                        </div>
+                    </td>
+                </tr>
             </table>`;
         return html;
     }

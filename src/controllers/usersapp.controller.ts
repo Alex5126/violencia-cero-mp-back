@@ -29,6 +29,7 @@ export async function login(req:Request, res:Response){
 
             res.json({
                 status:true,
+                id:user.id,
                 token:token
             });
         }else{

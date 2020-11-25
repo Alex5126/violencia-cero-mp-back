@@ -10,6 +10,7 @@ import UsuarioAdmModel from '../models/UsuarioAdmModel';
 import UsuarioDBModel from '../models/UsuarioDBModel';
 import { EmailSender } from '../utils/mailsender';
 import RecoveryCodes from '../utils/RecoveryCodes';
+import { LoginPayload } from '../interface/Payloads';
 
 
 export async function login(req:Request, res:Response){
@@ -24,6 +25,7 @@ export async function login(req:Request, res:Response){
         console.log("Login:"+equals);
 
         if(equals){
+            console.log(process.env.CADUCIDAD_TOKEN_APP);
             let token = jwt.sign(
                 {usuario:user.email,id:user.id},
                 process.env.SEED,{expiresIn:process.env.CADUCIDAD_TOKEN_ADM}
@@ -31,6 +33,7 @@ export async function login(req:Request, res:Response){
 
             res.json({
                 status:true,
+                id:user.id,
                 token:token
             });
         }else{
@@ -44,6 +47,40 @@ export async function login(req:Request, res:Response){
         res.status(401).json({
             status:false,
             message:"Usuario o contraseña incorrecto"
+        });
+    }
+}
+
+export async function perfil(req:any, res:Response){
+
+    let usuario:LoginPayload = req.usuarioPayload;
+
+    const consultaUsuario = `SELECT * FROM usuariosadm d WHERE d.id = ${usuario.id}
+            order by d.id desc`;
+
+    let usuarioDb = await MySqlConnPool.executeQuery(consultaUsuario);
+
+    //console.log(usuarioDb);
+
+    if(usuarioDb && usuarioDb.length>2){
+
+        let usuarioRes:UsuarioAdmModel[] = JSON.parse((usuarioDb).toString());
+
+        let usuario:UsuarioAdm = {
+            id:usuarioRes[0].id,
+            nombre:usuarioRes[0].nombre,
+            apellido:usuarioRes[0].apellido,
+            email:usuarioRes[0].email,
+            password:usuarioRes[0].password
+        };
+        delete usuario.password;
+        res.json(
+            usuario
+        );
+    }else{
+        res.status(401).json({
+            status:false,
+            message:"Id incorrecto"
         });
     }
 }
@@ -91,8 +128,6 @@ export async function getUsersApp(req:Request, res:Response){
         });
     }
 }
-
-
 
 
 export async function getElement(userRequest:UserRequest):Promise<UsuarioAdm>{
