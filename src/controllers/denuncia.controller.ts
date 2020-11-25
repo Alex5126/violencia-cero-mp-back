@@ -1,19 +1,24 @@
 import {Request, Response} from 'express';
 import { DenunciaInfo } from "../interface/Listas";
-import { Denuncia,Denunicado,Solicitante } from "../interface/Denuncia";
+import { Denuncia,Denunicado,SearchComplaint,Solicitante } from "../interface/Denuncia";
 import { InsertResult} from "../interface/Querys";
 
 import {MySqlConn} from '../database2';
 import {MySqlConnPool} from '../database';
 import DenunciaDBModel from "../models/DenunciaDBModel";
+import { LoginPayload } from '../interface/Payloads';
 
-export async function getList(req:Request, res:Response){
+export async function getList(req:any, res:Response){
 
+    let usuario:LoginPayload = req.usuarioPayload;
+
+    console.log(usuario.usuario);
+    
     const consulta = "SELECT d.id,d.estatus,u.email,d.fechaSolicitud,"+
                 "s.nombres,s.apellidoPaterno,s.apellidoMaterno,d.idUsuario"+
                 " FROM denuncias d "+
                 " INNER JOIN solicitantes s ON d.id = s.iddenuncia " +
-                " INNER JOIN usuarios u ON d.idUsuario = u.id " +
+                " INNER JOIN usuariosapp u ON d.idUsuario = u.id " +
                 " WHERE d.estatus IN ('NUEVO','PROCESO')";
 
     MySqlConn.executeQuery(consulta, (err:any, denuncias:DenunciaDBModel[])=>{
@@ -27,7 +32,7 @@ export async function getList(req:Request, res:Response){
             console.log(denuncias.length);
             let denArray:DenunciaInfo[] = new Array;
             for(let i= 0;i<denuncias.length;i++){
-                console.log(denuncias[i]);
+                //console.log(denuncias[i]);
                 denArray.push({
                     id:denuncias[i].id,
                     estatus:denuncias[i].estatus,
@@ -43,7 +48,6 @@ export async function getList(req:Request, res:Response){
         }
     }
     );
-
 }
 
 export async function getElement(req:Request, res:Response){
@@ -80,9 +84,10 @@ export async function getElement(req:Request, res:Response){
 
 }
 
-export async function addElement(req:Request, res:Response){
+export async function addElement(req:any, res:Response){
 
     let denuncia:Denuncia = req.body;
+    let usuario:LoginPayload = req.usuarioPayload;
 
     let queryDenuncia = 'INSERT INTO denuncias SET ?';
     let querySolicitante = 'INSERT INTO solicitantes SET ?';
@@ -90,7 +95,7 @@ export async function addElement(req:Request, res:Response){
 
     let dataDenuncia = {
         estatus:'NUEVO',
-        idUsuario:denuncia.idUsuario,
+        idUsuario:usuario.id,
         descripcionProblema:denuncia.descripcionProblema,
         tipoAyuda:denuncia.tipoAyuda
     }
@@ -101,11 +106,11 @@ export async function addElement(req:Request, res:Response){
 
         denuncia.solicitante.idDenuncia = insert.insertId;
 
-        denuncia.solicitante.id= null;
+        delete denuncia.solicitante.id;
         await MySqlConnPool.executeInsert(querySolicitante, denuncia.solicitante);
 
         denuncia.denunciado.idDenuncia = insert.insertId;
-        denuncia.denunciado.id = null;
+        delete denuncia.denunciado.id;
         await MySqlConnPool.executeInsert(queryDenunciado, denuncia.denunciado);
 
         res.json({
@@ -151,4 +156,51 @@ export async function updateElement(req:Request, res:Response){
             status:false
         });
     }
+}
+
+export async function getHistory(req:any, res:Response){
+
+    let search:SearchComplaint = req.body;
+
+    console.log(search);
+
+    //let joinStatus = search.status
+    
+    const consulta = "SELECT d.id,d.estatus,u.email,d.fechaSolicitud,"+
+                "s.nombres,s.apellidoPaterno,s.apellidoMaterno,d.idUsuario"+
+                " FROM denuncias d "+
+                " INNER JOIN solicitantes s ON d.id = s.iddenuncia " +
+                " INNER JOIN usuariosapp u ON d.idUsuario = u.id " +
+                " WHERE d.estatus IN ('"+search.status+"') AND "+
+                " d.fechaSolicitud >'"+search.dateIni+"' AND d.fechaSolicitud < '"+search.dateFin+"'";
+
+    console.log(consulta);
+
+    MySqlConn.executeQuery(consulta, (err:any, denuncias:DenunciaDBModel[])=>{
+        if(err){
+            res.status(400).json({
+                status:false,
+                error:err
+            })
+        }else{
+
+            console.log(denuncias.length);
+            let denArray:DenunciaInfo[] = new Array;
+            for(let i= 0;i<denuncias.length;i++){
+                //console.log(denuncias[i]);
+                denArray.push({
+                    id:denuncias[i].id,
+                    estatus:denuncias[i].estatus,
+                    fechaSolicitud:denuncias[i].fechaSolicitud,
+                    nombreSolicitante:denuncias[i].nombres+" "+denuncias[i].apellidoPaterno+" "+denuncias[i].apellidoMaterno,
+                    usuarioSolicitante:denuncias[i].email+""
+                });
+            }
+            res.json({
+                status:true,
+                data:denArray
+            })
+        }
+    }
+    );
 }

@@ -2,7 +2,7 @@ import {Router} from "express";
 
 const router = Router();
 
-import { getList,getElement,addElement,updateElement } from "../controllers/denuncia.controller";
+import { getList,getElement,addElement,updateElement,getHistory } from "../controllers/denuncia.controller";
 
 
 router.route('/').get
@@ -13,5 +13,7 @@ router.route('/').post
     (addElement);
 router.route('/:id').put
     (updateElement);
+router.route('/history').post
+    (getHistory);
 
 export default router;

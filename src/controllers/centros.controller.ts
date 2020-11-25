@@ -12,15 +12,6 @@ import { EmailSender } from '../utils/mailsender';
 
 export async function getList(req:Request, res:Response){
 
-    var mailOptions = {
-        from: 'hoteles@contravel.com.mx',
-        to: 'gmtrejo@gmail.com',
-        subject: 'Sending Email using Node.js',
-        text: 'That was easy!'
-      };
-
-    EmailSender.sendMail(mailOptions);
-
     const consulta = "SELECT * FROM centrosatencion d "+
                 " WHERE d.estatus IN ('ACTIVO')";
 

@@ -4,11 +4,14 @@ import morgan from 'morgan';
 //Route
 import InedexRoute from './routes/index.routes';
 import RegistrationRoute from './routes/registration.routes';
-import AuthRoute from "./routes/auth.routes";
+import UserAppRoute from "./routes/appusers.routes";
 import DenunciaRoute from "./routes/denuncia.routes";
 import ProcedimientoRoute from "./routes/procedimiento.routes";
 import ContactosRoute from "./routes/contactos.routes";
 import CentrosRoute from "./routes/centros.routes";
+import AdminRoute from "./routes/adminusers.routes";
+import { validaToken } from './filters/autenticacion';
+import { loadConfig } from "./config/config";
 
 export class App{
 
@@ -23,8 +26,7 @@ export class App{
 
     settings(){
         this.app.set('port',this.port || process.env.PORT || 3000);
-        process.env.SEED =  process.env.SEED || 'desarrollo';
-        process.env.CADUCIDAD_TOKEN = ''+ (60*60*24*30);
+        loadConfig();
     }
 
     middlewares(){
@@ -34,12 +36,13 @@ export class App{
 
     routes(){
         this.app.use(InedexRoute);
-        this.app.use('/registro',RegistrationRoute);
-        this.app.use('/auth',AuthRoute);
-        this.app.use('/denuncias',DenunciaRoute);
+        this.app.use('/usuario',RegistrationRoute);
+        this.app.use('/perfil',UserAppRoute);
+        this.app.use('/denuncias', validaToken, DenunciaRoute);
         this.app.use('/procedimientos',ProcedimientoRoute);
         this.app.use('/centros',CentrosRoute);
         this.app.use('/contactos',ContactosRoute);
+        this.app.use('/admin',AdminRoute);
     }
 
     async listen(){

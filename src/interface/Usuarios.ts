@@ -1,4 +1,4 @@
-export interface Usuario {
+export interface UsuarioApp {
     id:Number;
     estatus:String;
     nombre: String;
@@ -8,4 +8,12 @@ export interface Usuario {
     password: String;
     tel:String;
     cp:String;
+}
+
+export interface UsuarioAdm {
+    id:Number;
+    email:String;
+    password: String;
+    nombre:String;
+    apellido:String;
 }

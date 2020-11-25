@@ -1,5 +1,10 @@
-process.env.CADUCIDAD_TOKEN = ''+ (60*60*24*30);
+import { EmailSender } from "../utils/mailsender";
 
-process.env.PORT = process.env.PORT || ''+3000;
-
-process.env.SEED =  process.env.SEED || 'desarrollo';
+export function loadConfig() {
+    process.env.CADUCIDAD_TOKEN_APP = '' + (60 * 60 * 24 * 365);
+    process.env.CADUCIDAD_TOKEN_ADM = '' + (60 * 60 * 24);
+    process.env.PORT = process.env.PORT || '' + 3000;
+    process.env.SEED = process.env.SEED || 'desarrollo';
+    //process.env.DB_CONNECTION = 
+    EmailSender.instance;
+}
