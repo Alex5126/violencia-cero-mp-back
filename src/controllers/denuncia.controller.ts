@@ -175,13 +175,17 @@ export async function getHistory(req:any, res:Response){
 
     //let joinStatus = search.status
     
-    const consulta = "SELECT d.id,d.estatus,u.email,d.fechaSolicitud,"+
+    let consulta = "SELECT d.id,d.estatus,u.email,d.fechaSolicitud,"+
                 "s.nombres,s.apellidoPaterno,s.apellidoMaterno,d.idUsuario"+
                 " FROM denuncias d "+
                 " INNER JOIN solicitantes s ON d.id = s.iddenuncia " +
                 " INNER JOIN usuariosapp u ON d.idUsuario = u.id " +
-                " WHERE d.estatus IN ('"+search.status+"') AND "+
+                " WHERE "+
                 " d.fechaSolicitud >'"+search.dateIni+"' AND d.fechaSolicitud < '"+search.dateFin+"'";
+
+    if(search.status !== 'TODOS'){
+        consulta = consulta+" AND d.estatus IN ('"+search.status+"')"
+    }
 
     console.log(consulta);
 
