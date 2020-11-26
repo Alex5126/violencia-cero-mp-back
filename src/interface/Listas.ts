@@ -10,3 +10,8 @@ export interface ProcedimientoInfo {
     id: number;
     nombre:String;
 }
+
+export interface InformacionInfo {
+    id: number;
+    nombre:String;
+}

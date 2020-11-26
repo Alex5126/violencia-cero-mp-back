@@ -8,6 +8,7 @@ export class EmailSender{
     private static _instance:EmailSender;
     transporter : nodemailer.Transporter;
     conectado:boolean = false;
+    private emailConfig:Map<string,string>;
 
      constructor(){
         console.log('Email Inicializado');
@@ -39,15 +40,15 @@ export class EmailSender{
         MySqlConn.executeQuery("SELECT * FROM config WHERE param = 'EMAIL_CONFIG'", (err:any, config:ConfigParam[])=>{
             if(config){
                 console.log(config[0].value);
-                let emailConfig :Map<string,string> = stringToMapPams(config[0].value,"|","=");
+                this.emailConfig = stringToMapPams(config[0].value,"|","=");
                 //console.log(emailConfig);
                 this.transporter = nodemailer.createTransport({
-                    host: emailConfig.get("SMTP"),
-                    port: Number.parseInt(emailConfig.get("PORT")),
+                    host: this.emailConfig.get("SMTP"),
+                    port: Number.parseInt(this.emailConfig.get("PORT")),
                     secure: false, // true for 465, false for other ports
                     auth:{
-                        user:emailConfig.get("EMAIL"),
-                        pass:emailConfig.get("PASS")
+                        user:this.emailConfig.get("EMAIL"),
+                        pass:this.emailConfig.get("PASS")
                     }
                 });
             }
@@ -73,6 +74,31 @@ export class EmailSender{
         });
         console.log(result);
         return result;
+    }
+
+    public static sendMailHtml(to:String,subject:String,html:String):boolean{
+        let result:boolean = false;
+
+        let mailOptions:Object = {
+            from:this.instance.emailConfig.get("EMAIL"),
+            to: to,
+            subject: subject,
+            html:html
+        };
+
+        this.instance.transporter.sendMail(mailOptions, (error,info ) =>{
+            console.log("senMail returned!");
+            if (error) {
+                console.log("ERROR!", error);
+                result = false;
+            } else {
+                console.log('Email sent: ' + info.response);
+                result = true;
+            }
+        });
+        console.log(result);
+        return result;
+
     }
 
 }

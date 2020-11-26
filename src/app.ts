@@ -7,6 +7,7 @@ import RegistrationRoute from './routes/registroapp.routes';
 import UserAppRoute from "./routes/appusers.routes";
 import DenunciaRoute from "./routes/denuncia.routes";
 import ProcedimientoRoute from "./routes/procedimiento.routes";
+import InformacionRoute from "./routes/informacion.routes";
 import ContactosRoute from "./routes/contactos.routes";
 import CentrosRoute from "./routes/centros.routes";
 import AdminRoute from "./routes/adminusers.routes";
@@ -41,6 +42,7 @@ export class App{
         this.app.use('/perfil',UserAppRoute);
         this.app.use('/denuncias', validaToken, DenunciaRoute);
         this.app.use('/procedimientos',ProcedimientoRoute);
+        this.app.use('/informacion',InformacionRoute);
         this.app.use('/centros',CentrosRoute);
         this.app.use('/contactos',ContactosRoute);
         this.app.use('/admin',AdminRegistroRoute);

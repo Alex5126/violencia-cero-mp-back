@@ -1,6 +1,6 @@
 import {Request, Response} from 'express';
 
-import {connect, MySqlConnPool} from '../database';
+import { MySqlConnPool} from '../database';
 import { MySqlConn } from '../database2';
 import { Contacto } from '../interface/Contacto';
 import { InsertResult } from '../interface/Querys';

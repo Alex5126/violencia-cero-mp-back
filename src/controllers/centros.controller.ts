@@ -2,13 +2,13 @@ import {Request, Response} from 'express';
 import { ProcedimientoInfo } from "../interface/Listas";
 import { Procedimiento,Parrafo } from "../interface/Procedimiento";
 
-import {connect, MySqlConnPool} from '../database';
 import { MySqlConn } from '../database2';
 import ProcedimientoDBModel from '../models/ProcedimientoDBModel';
 import { InsertResult } from '../interface/Querys';
 import CentroDBModel from '../models/CentroDBModel';
 import { Centro } from '../interface/Centro';
 import { EmailSender } from '../utils/mailsender';
+import { MySqlConnPool } from '../database';
 
 export async function getList(req:Request, res:Response){
 

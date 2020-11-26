@@ -1,18 +1,7 @@
 //import moduleName from 'mysql2/promise';
 import { createPool,Pool,FieldPacket,RowDataPacket } from 'mysql2/promise';
 import { InsertResult } from './interface/Querys';
-
-export async function connect(){
-    const connection = createPool({
-        host: 'localhost',
-        user: 'userdb',
-        password: 'passwdb',
-        database: 'msegura',
-        port:3506,
-        connectionLimit: 10
-    });
-    return connection;
-}
+import { ConnectionDb } from './models/ConnectionDb';
 
 export class MySqlConnPool{
     private static _instance:MySqlConnPool;
@@ -21,12 +10,13 @@ export class MySqlConnPool{
 
     constructor(){
         console.log('Mysql Inicializado');
+        let connection:ConnectionDb = JSON.parse(process.env.DB_CONNECTION);
         this.connectionPool = createPool({
-            host: 'localhost',
-            user: 'userdb',
-            password: 'passwdb',
-            database: 'msegura',
-            port:3506,
+            host: connection.host,
+            user: connection.user,
+            password: connection.password,
+            database: connection.database,
+            port:connection.port,
             connectionLimit: 10
         });
 

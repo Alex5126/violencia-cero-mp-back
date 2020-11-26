@@ -1,4 +1,5 @@
 import mysql = require('mysql');
+import { ConnectionDb } from './models/ConnectionDb';
 
 export class MySqlConn{
     private static _instance:MySqlConn;
@@ -7,12 +8,14 @@ export class MySqlConn{
 
     constructor(){
         console.log('Mysql Inicializado');
+        let conn:ConnectionDb = JSON.parse(process.env.DB_CONNECTION);
+        
         this.connection = mysql.createConnection({
-            host: 'localhost',
-            user: 'userdb',
-            password: 'passwdb',
-            database: 'msegura',
-            port:3506
+            host: conn.host,
+            user: conn.user,
+            password: conn.password,
+            database: conn.database,
+            port:conn.port
         });
 
         this.conectarDB();

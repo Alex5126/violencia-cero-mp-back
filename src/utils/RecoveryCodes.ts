@@ -17,7 +17,7 @@ export default class RecoveryCodes{
         return rand;
     }
 
-    public static validCode(key:String):String{
+    public static retrieveCode(key:String):String{
         return this.instance.codes.get(key);
     }
 

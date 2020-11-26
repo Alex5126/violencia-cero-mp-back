@@ -1,31 +1,32 @@
 import {Request, Response} from 'express';
-import { ProcedimientoInfo } from "../interface/Listas";
+import { InformacionInfo } from "../interface/Listas";
 import { Procedimiento,Parrafo } from "../interface/Procedimiento";
 
 import { MySqlConnPool} from '../database';
 import { MySqlConn } from '../database2';
-import ProcedimientoDBModel from '../models/ProcedimientoDBModel';
+import InformacionDBModel from '../models/InformacionDBModel';
 import { InsertResult } from '../interface/Querys';
 
 export async function getList(req:Request, res:Response){
 
     const consulta = "SELECT d.id,d.titulo,d.estatus,d.fecha"+
-                " FROM procedimientos d "+
+                " FROM informacion d "+
                 " WHERE d.estatus IN ('ACTIVO')";
 
-    MySqlConn.executeQuery(consulta, (err:any, procedimientos:ProcedimientoDBModel[])=>{
+    MySqlConn.executeQuery(consulta, (err:any, informacion:InformacionDBModel[])=>{
         if(err){
+            //console.log("Error:"+err);
             res.status(400).json({
                 status:false,
-                message:err.sqlMessage
+                message:err
             })
         }else{
-            let denArray:ProcedimientoInfo[] = new Array;
-            for(let i= 0;i<procedimientos.length;i++){
-                //console.log(procedimientos[i]);
+            let denArray:InformacionInfo[] = new Array;
+            for(let i= 0;i<informacion.length;i++){
+                //console.log(informacion[i]);
                 denArray.push({
-                    id:procedimientos[i].id,
-                    nombre:procedimientos[i].titulo
+                    id:informacion[i].id,
+                    nombre:informacion[i].titulo
                 });
             }
             res.json({
@@ -41,12 +42,12 @@ export async function getElement(req:Request, res:Response){
 
     const id = req.params.id;
 
-    const consultaProcedimiento = "SELECT * FROM procedimientos d "+
+    const consultaProcedimiento = "SELECT * FROM informacion d "+
                 "WHERE d.id = "+id;
 
     let procedimientoDb = MySqlConnPool.executeQuery(consultaProcedimiento);
 
-    let procedimientoRes:ProcedimientoDBModel[] = JSON.parse((await procedimientoDb).toString());
+    let procedimientoRes:InformacionDBModel[] = JSON.parse((await procedimientoDb).toString());
 
     if(procedimientoDb !== null){
 
@@ -71,7 +72,7 @@ export async function addElement(req:Request, res:Response){
 
     let procedimiento:Procedimiento = req.body;
 
-    let queryInsert = 'INSERT INTO procedimientos SET ?';
+    let queryInsert = 'INSERT INTO informacion SET ?';
 
     let dataProcedimiento = {
         titulo:procedimiento.titulo,
@@ -101,7 +102,7 @@ export async function updateElement(req:Request, res:Response){
     let procedimiento:Procedimiento = req.body;
     const id = req.params.id;
 
-    let queryDenuncia = 'UPDATE procedimientos SET ? WHERE id = ?';
+    let queryDenuncia = 'UPDATE informacion SET ? WHERE id = ?';
 
     let dataProcedimiento = {
         titulo:procedimiento.titulo,

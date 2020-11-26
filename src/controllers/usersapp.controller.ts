@@ -2,7 +2,7 @@ import {Request, Response} from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-import {connect, MySqlConnPool} from '../database';
+import { MySqlConnPool} from '../database';
 import { InsertResult } from '../interface/Querys';
 import { UserRecovery, UserRequest } from '../interface/Request';
 import { UsuarioApp } from '../interface/Usuarios';
@@ -250,7 +250,7 @@ export async function validCode(req:Request, res:Response){
     
     let user:UsuarioApp = await getElement({email:usuario.email,password:""});
 
-    let code:String = RecoveryCodes.validCode(usuario.email);
+    let code:String = RecoveryCodes.retrieveCode(usuario.email);
 
     if(code){
         if(code === usuario.code){
@@ -281,7 +281,7 @@ export async function updatePasswordRecovery(req:Request, res:Response){
 
     let queryUsuario = 'UPDATE usuariosapp SET ? WHERE id = ?';
 
-    let code:String = RecoveryCodes.validCode(usuario.email);
+    let code:String = RecoveryCodes.retrieveCode(usuario.email);
 
     if(code && code === usuario.code){
 

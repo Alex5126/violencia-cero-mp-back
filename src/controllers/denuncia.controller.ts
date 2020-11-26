@@ -7,6 +7,10 @@ import {MySqlConn} from '../database2';
 import {MySqlConnPool} from '../database';
 import DenunciaDBModel from "../models/DenunciaDBModel";
 import { LoginPayload } from '../interface/Payloads';
+import { notificaDenunciaPanel } from '../utils/Notifications';
+import { getParamConfig } from '../utils/ParametersConfig';
+import { ConfigParam } from '../interface/Config';
+import { EmailSender } from '../utils/mailsender';
 
 export async function getList(req:any, res:Response){
 
@@ -112,6 +116,11 @@ export async function addElement(req:any, res:Response){
         denuncia.denunciado.idDenuncia = insert.insertId;
         delete denuncia.denunciado.id;
         await MySqlConnPool.executeInsert(queryDenunciado, denuncia.denunciado);
+
+        let html:String = notificaDenunciaPanel(denuncia);
+        let param:ConfigParam = await getParamConfig("EMAIL_NOTIFY");
+
+        EmailSender.sendMailHtml(param.value, `Notificacion de denuncia ID ${insert.insertId}`, html);
 
         res.json({
             status:true,

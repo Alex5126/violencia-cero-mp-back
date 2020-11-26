@@ -3,7 +3,6 @@
 import {Router,Request, Response} from 'express';
 
 import { UsuarioApp } from "../interface/Usuarios";
-import {connect} from '../database';
 
 import bcrypt from 'bcryptjs';
 
