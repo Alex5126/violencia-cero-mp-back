@@ -122,3 +122,26 @@ export async function updateElement(req:Request, res:Response){
         });
     }
 }
+
+export async function deleteElement(req:Request, res:Response){
+
+    const id = req.params.id;
+
+    let queryDenuncia = 'UPDATE procedimientos SET ? WHERE id = ?';
+
+    let dataProcedimiento = {
+        estatus:'DELETE',
+    }
+
+    let update:InsertResult = await MySqlConnPool.executeUpdate(queryDenuncia, dataProcedimiento,Number.parseInt(id));
+
+    if(update.affectedRows === 1){
+        res.json({
+            status:true
+        });
+    }else{
+        res.json({
+            status:false
+        });
+    }
+}

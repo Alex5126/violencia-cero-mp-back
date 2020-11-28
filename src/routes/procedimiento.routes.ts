@@ -2,7 +2,7 @@ import {Router} from "express";
 
 const router = Router();
 
-import { getList,getElement,addElement,updateElement } from "../controllers/procedures.controller";
+import { getList,getElement,addElement,updateElement, deleteElement } from "../controllers/procedures.controller";
 
 
 router.route('/').get
@@ -13,5 +13,7 @@ router.route('/').post
     (addElement);
 router.route('/:id').put
     (updateElement);
+router.route('/:id').delete
+    (deleteElement);
 
 export default router;
