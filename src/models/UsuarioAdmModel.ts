@@ -6,4 +6,5 @@ export default interface UsuarioAdmModel {
     apellido:String;
     estatus:String;
     fecha:String;
+    tipo:String;
 }

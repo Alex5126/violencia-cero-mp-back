@@ -71,7 +71,8 @@ export async function perfil(req:any, res:Response){
             nombre:usuarioRes[0].nombre,
             apellido:usuarioRes[0].apellido,
             email:usuarioRes[0].email,
-            password:usuarioRes[0].password
+            password:usuarioRes[0].password,
+            tipo:usuarioRes[0].tipo
         };
         delete usuario.password;
         res.json(
@@ -129,6 +130,44 @@ export async function getUsersApp(req:Request, res:Response){
     }
 }
 
+export async function getUsersPanel(req:Request, res:Response){
+
+    //const userRequest:UserRequest = req.body;
+
+    const consultaUsuario = "SELECT * FROM usuariosadm d order by d.id asc";
+
+    let usuarioDb = await MySqlConnPool.executeQuery(consultaUsuario);
+
+    //console.log(usuarioDb);
+
+    if(usuarioDb){
+        let users:UsuarioAdm[] = [];
+        let usuarioRes:UsuarioAdmModel[] = JSON.parse((usuarioDb).toString());
+        usuarioRes.forEach(user => {
+            let usuario:UsuarioAdm = {
+                id:user.id,
+                nombre:user.nombre,
+                apellido:user.apellido,
+                email:user.email,
+                password:user.password,
+                tipo:user.tipo,
+            };
+            delete usuario.password;
+            users.push(usuario);
+        });
+        
+        res.json({
+            status:true,
+            data:users
+        });
+    }else{
+        res.json({
+            status:false,
+            data:"Sin datos"
+        });
+    }
+    
+}
 
 export async function getElement(userRequest:UserRequest):Promise<UsuarioAdm>{
 
@@ -150,7 +189,8 @@ export async function getElement(userRequest:UserRequest):Promise<UsuarioAdm>{
             nombre:usuarioRes[0].nombre,
             apellido:usuarioRes[0].apellido,
             email:usuarioRes[0].email,
-            password:usuarioRes[0].password
+            password:usuarioRes[0].password,
+            tipo:usuarioRes[0].tipo
         };
         return usuario;
     }
@@ -176,12 +216,13 @@ export async function addUser(req:Request, res:Response){
 
         let password = await bcrypt.hash(usuario.password.toString(),5);
 
-        let dataUsuario = {
+        let dataUsuario= {
             nombre:usuario.nombre,
             apellido:usuario.apellido,
             email:usuario.email,
             estatus:"ACTIVO",
-            password:password
+            password:password,
+            tipo:usuario.tipo
         }
 
         //console.log(dataProcedimiento);
@@ -218,7 +259,8 @@ export async function updateElement(req:Request, res:Response){
         nombre:usuario.nombre,
         apellido:usuario.apellido,
         email:usuario.email,
-        password:password
+        password:password,
+        tipo: usuario.tipo
     }
 
     if(dataUsuario.nombre === undefined) delete dataUsuario.nombre;
@@ -340,6 +382,27 @@ export async function updatePasswordRecovery(req:Request, res:Response){
         res.json({
             status:false,
             message:"codigo invalido"
+        });
+    }
+}
+
+export async function deleteUserPanel(req:Request, res:Response){
+
+    const id = req.params.id;
+
+    let usuariosadm = 'DELETE FROM usuariosadm WHERE id = '+id;
+
+    let update = await MySqlConnPool.executeQuery(usuariosadm);
+
+    let result:InsertResult = JSON.parse((update).toString());
+
+    if(result.affectedRows === 1){
+        res.json({
+            status:true
+        });
+    }else{
+        res.json({
+            status:false
         });
     }
 }

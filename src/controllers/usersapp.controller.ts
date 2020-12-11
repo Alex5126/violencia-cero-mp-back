@@ -315,3 +315,24 @@ export async function updatePasswordRecovery(req:Request, res:Response){
         });
     }
 }
+
+export async function deleteUserApp(req:Request, res:Response){
+
+    const id = req.params.id;
+
+    let usuariosapp = 'DELETE FROM usuariosapp WHERE id = '+id;
+
+    let update = await MySqlConnPool.executeQuery(usuariosapp);
+
+    let result:InsertResult = JSON.parse((update).toString());
+
+    if(result.affectedRows === 1){
+        res.json({
+            status:true
+        });
+    }else{
+        res.json({
+            status:false
+        });
+    }
+}

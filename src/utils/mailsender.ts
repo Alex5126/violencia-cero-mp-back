@@ -43,9 +43,10 @@ export class EmailSender{
                 this.emailConfig = stringToMapPams(config[0].value,"|","=");
                 //console.log(emailConfig);
                 this.transporter = nodemailer.createTransport({
-                    host: this.emailConfig.get("SMTP"),
-                    port: Number.parseInt(this.emailConfig.get("PORT")),
-                    secure: false, // true for 465, false for other ports
+                    //host: this.emailConfig.get("SMTP"),
+                    //port: Number.parseInt(this.emailConfig.get("PORT")),
+                    //secure: false, // true for 465, false for other ports
+                    service: 'Gmail',
                     auth:{
                         user:this.emailConfig.get("EMAIL"),
                         pass:this.emailConfig.get("PASS")

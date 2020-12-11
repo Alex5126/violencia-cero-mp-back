@@ -16,4 +16,5 @@ export interface UsuarioAdm {
     password: String;
     nombre:String;
     apellido:String;
+    tipo:String;
 }
